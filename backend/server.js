@@ -1,6 +1,6 @@
 import path from "path";
 import express from "express";
-const port = process.env.port || 8080;
+const port = 6969;
 import dotenv from "dotenv";
 import db from "./config/db.js";
 import userRoutes from "./routes/userRoutes.js";
@@ -12,17 +12,10 @@ import Twilio from "twilio";
 db();
 dotenv.config();
 const app = express();
-app.use(
-  cors({
-    origin: "*", // Replace with your React app's URL
-    methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
-    credentials: true, // Enable credentials (cookies, HTTP authentication)
-  })
-);
+app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
-app.use("/uploads", express.static("uploads"));
 app.use("/api/users", userRoutes);
 app.use("/api/product", prodcutRoutes);
 if (process.env.NODE_ENV === "production") {
