@@ -49,7 +49,7 @@ const registerUser = asyncHandler(async (req, res) => {
   if (user) {
     const verificationToken = user.generateVerificationToken();
     // console.log(verificationToken);
-    const url = `http://localhost:6969/api/users/verify/${verificationToken}`;
+    const url = `https://rentit-api.onrender.com/api/users/verify/${verificationToken}`;
     const mailOptions = {
       from: "medigo777@gmail.com",
       to: email,
