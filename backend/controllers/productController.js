@@ -3,52 +3,70 @@ import Product from "../models/productModel.js";
 import User from "../models/userModel.js";
 import Category from "../models/categoryModel.js";
 import nodemailer from "nodemailer";
+import cloudinary from "cloudinary";
+
+cloudinary.config({
+  cloud_name: process.env.CLOUD_NAME,
+  api_key: process.env.CLOUD_API_KEY,
+  api_secret: process.env.CLOUD_API_SECRET,
+});
 var smtpConfig = {
   service: "gmail",
   // use SSL
-  auth: { user: "medigo777@gmail.com", pass: "adfhbsdtrhgrsoqi" },
+  auth: { user: process.env.EMAIL, pass: process.env.PASSWORD },
 };
-
 const transporter = nodemailer.createTransport(smtpConfig);
 const postProduct = async (req, res, next) => {
   const { name, description, category, price, days } = req.body;
   const id = req.body.id;
-  console.log(req.file);
-  const image = req.file.filename;
+  let image = "uploads/" + req.file.filename;
 
-  const category_id = await Category.findOne({ category_name: category });
-  const offers = [];
-
-  const product = await Product.create({
-    name,
-    description,
+  cloudinary.v2.uploader.upload(
     image,
-    price,
-    offers,
-    category: category_id.category_name,
-    days,
-  });
 
-  User.findById(id).then((user) => {
-    if (user !== null) {
-      user.products.push(product._id);
-      user.save();
+    async function (error, result) {
+      if (error) {
+        console.log(error);
+      } else {
+        image = result.secure_url;
+        console.log(result);
+      }
+
+      const category_id = await Category.findOne({ category_name: category });
+      const offers = [];
+
+      const product = await Product.create({
+        name,
+        description,
+        image,
+        price,
+        offers,
+        category: category_id.category_name,
+        days,
+      });
+
+      User.findById(id).then((user) => {
+        if (user !== null) {
+          user.products.push(product._id);
+          user.save();
+        }
+      });
+
+      if (product) {
+        return res.status(200).json({
+          id: product._id,
+          description: product.description,
+          name: product.name,
+          category: product.category,
+          image: product.image,
+          price: product.price,
+          days: product.days,
+        });
+      } else {
+        return res.status(400);
+      }
     }
-  });
-
-  if (product) {
-    return res.status(200).json({
-      id: product._id,
-      description: product.description,
-      name: product.name,
-      category: product.category,
-      image: product.image,
-      price: product.price,
-      days: product.days,
-    });
-  } else {
-    return res.status(400);
-  }
+  );
 };
 
 const getAllProduct = asyncHandler(async (req, res, next) => {
