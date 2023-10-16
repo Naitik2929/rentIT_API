@@ -14,7 +14,7 @@ const postProduct = async (req, res, next) => {
   const { name, description, category, price, days } = req.body;
   const id = req.body.id;
   console.log(req.file);
-  const image = req.file.path;
+  const image = req.file.filename;
 
   const category_id = await Category.findOne({ category_name: category });
   const offers = [];

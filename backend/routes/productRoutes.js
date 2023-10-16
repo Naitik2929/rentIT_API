@@ -20,17 +20,15 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, path.join(__dirname, "../public/Images"));
+    cb(null, "uploads/");
   },
   filename: (req, file, cb) => {
-    cb(
-      null,
-      file.fieldname + "_" + Date.now() + path.extname(file.originalname)
-    );
+    // Generate a unique filename, e.g., using a timestamp
+    const uniqueFilename = Date.now() + "-" + file.originalname;
+    cb(null, uniqueFilename);
   },
 });
-// const upload = multer({ storage: storage });
-const upload = multer({ dest: "uploads/" });
+const upload = multer({ storage: storage });
 
 router.post("/", upload.single("file"), postProduct);
 router.get("/allproduct", getAllProduct);
