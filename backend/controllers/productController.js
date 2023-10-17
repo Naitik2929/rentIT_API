@@ -151,7 +151,35 @@ const acceptOffer = asyncHandler(async (req, res, next) => {
     product.offers.push(correctoffer);
     product.price = correctoffer.offerprice;
     product.save();
-    const mailOptions = {
+
+    // Send email to the user whose offer was accepted
+    const userMailOptions = {
+      from: "medigo777@gmail.com",
+      to: correctoffer.userEmail, // Use the correct user's email
+      subject: "Your Offer was Accepted",
+      html: `
+        <html>
+          <body>
+            <h1>Hello ${correctoffer.username},</h1>
+            <p>Your offer has been accepted for the product with ID: ${product.name}.</p>
+            <p>Offer Price: ₹${correctoffer.offerprice}</p>
+            <p>The seller will contect you for further details.</p>
+            <p>Thank you for using RentIT. Have a nice day.</p>
+          </body>
+        </html>
+      `,
+    };
+
+    await transporter.sendMail(userMailOptions, (err, userRes) => {
+      if (err) {
+        console.log(err);
+      } else {
+        console.log("User notification email sent successfully");
+      }
+    });
+
+    // Send email to the user who accepted the offer
+    const sellerMailOptions = {
       from: "medigo777@gmail.com",
       to: req.body.userData.email,
       subject: "Offer Details",
@@ -161,9 +189,9 @@ const acceptOffer = asyncHandler(async (req, res, next) => {
             <h1>Hello ${req.body.userData.name},</h1>
             <p>Here are the details of the deal:</p>
             <ul>
-              <li>User Name: ${correctoffer.username}</li>
-              <li>User Email: ${correctoffer.userEmail}</li>
-              <li>User Phone Number: ${correctoffer.userPhoneNo}</li>
+              <li>Name: ${correctoffer.username}</li>
+              <li>Email: ${correctoffer.userEmail}</li>
+              <li>Phone Number: ${correctoffer.userPhoneNo}</li>
               <li>Offer Price: ₹${correctoffer.offerprice}</li>
             </ul>
             <h3>You can use these details for further communication.</h3><br />
@@ -172,13 +200,15 @@ const acceptOffer = asyncHandler(async (req, res, next) => {
         </html>
       `,
     };
-    await transporter.sendMail(mailOptions, (err, res) => {
+
+    await transporter.sendMail(sellerMailOptions, (err, sellerRes) => {
       if (err) {
         console.log(err);
       } else {
-        console.log("The email was sent successfully");
+        console.log("Seller notification email sent successfully");
       }
     });
+
     return res.status(200).json({
       message: "offer accepted",
     });
