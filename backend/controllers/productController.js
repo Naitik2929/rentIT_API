@@ -161,7 +161,7 @@ const acceptOffer = asyncHandler(async (req, res, next) => {
         <html>
           <body>
             <h1>Hello ${correctoffer.username},</h1>
-            <p>Your offer has been accepted for the product with ID: ${product.name}.</p>
+            <p>Your offer has been accepted for the product : ${product.name}.</p>
             <p>Offer Price: ₹${correctoffer.offerprice}</p>
             <p>The seller will contect you for further details.</p>
             <p>Thank you for using RentIT. Have a nice day.</p>
