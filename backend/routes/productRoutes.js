@@ -23,7 +23,7 @@ const __dirname = path.dirname(__filename);
 const upload = multer({ dest: "uploads/" });
 
 router.post("/", upload.single("file"), postProduct);
-
+router.get("/allproduct", getAllProduct);
 router.get("/marksold/:id", getMarkSold);
 router.get("/:id", getProductById);
 router.get("/userproducts/:id", getUserProduct);

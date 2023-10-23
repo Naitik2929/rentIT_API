@@ -73,6 +73,7 @@ const postProduct = async (req, res, next) => {
 
 const getAllProduct = asyncHandler(async (req, res, next) => {
   const allProduct = await Product.find();
+  console.log(allProduct)
   res.status(200).json({ allProduct: allProduct });
 });
 
