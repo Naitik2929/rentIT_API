@@ -17,10 +17,10 @@ var smtpConfig = {
 };
 const transporter = nodemailer.createTransport(smtpConfig);
 const postProduct = async (req, res, next) => {
-  const { name, description, category, price, days } = req.body;
+  console.log(req.body);
+  const { name, description, category, price, days, ownerName } = req.body;
   const id = req.body.id;
   let image = "uploads/" + req.file.filename;
-
   cloudinary.v2.uploader.upload(
     image,
 
@@ -39,6 +39,7 @@ const postProduct = async (req, res, next) => {
         name,
         description,
         image,
+        ownerName,
         price,
         offers,
         category: category_id.category_name,
@@ -59,6 +60,7 @@ const postProduct = async (req, res, next) => {
           name: product.name,
           category: product.category,
           image: product.image,
+          ownerName: product.ownerName,
           price: product.price,
           days: product.days,
         });

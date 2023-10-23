@@ -16,6 +16,9 @@ const productSchema = mongoose.Schema({
   image: {
     type: String,
   },
+  ownerName: {
+    type: String,
+  },
   user: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
